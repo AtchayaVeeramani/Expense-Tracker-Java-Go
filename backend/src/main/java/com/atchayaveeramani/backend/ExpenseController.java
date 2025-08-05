@@ -1,19 +1,60 @@
 package com.atchayaveeramani.backend;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
+
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Arrays;
 
 @RestController
+@RequestMapping("/expenses")
 public class ExpenseController {
 
-    @GetMapping("/expenses")
-    public List<Expense> getAllExpenses() {  
-        return Arrays.asList(
-            new Expense(1L, "Coffee", 2.50, LocalDate.now()),
-            new Expense(2L, "Book", 15.00, LocalDate.now())
-        );
+    @Autowired
+    private ExpenseRepository expenseRepository;
+
+    // GET /expenses - fetch all expenses
+    @GetMapping
+    public List<Expense> getAllExpenses() {
+        return expenseRepository.findAll();
+    }
+
+    // POST /expenses - add new expense
+    @PostMapping
+    public Expense addExpense(@RequestBody Expense expense) {
+        if (expense.getDate() == null) {
+            expense.setDate(LocalDate.now());
+        }
+        return expenseRepository.save(expense);
+    }
+
+    // GET /expenses/{id} - get expense by id
+    @GetMapping("/{id}")
+    public Expense getExpenseById(@PathVariable Long id) {
+        return expenseRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Expense not found"));
+    }
+
+    // PUT /expenses/{id} - update existing expense
+    @PutMapping("/{id}")
+    public Expense updateExpense(@PathVariable Long id, @RequestBody Expense expenseDetails) {
+        Expense expense = expenseRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Expense not found"));
+
+        expense.setTitle(expenseDetails.getTitle());
+        expense.setAmount(expenseDetails.getAmount());
+        expense.setDate(expenseDetails.getDate() != null ? expenseDetails.getDate() : expense.getDate());
+
+        return expenseRepository.save(expense);
+    }
+
+    // DELETE /expenses/{id} - delete expense
+    @DeleteMapping("/{id}")
+    public void deleteExpense(@PathVariable Long id) {
+        Expense expense = expenseRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Expense not found"));
+        expenseRepository.delete(expense);
     }
 }

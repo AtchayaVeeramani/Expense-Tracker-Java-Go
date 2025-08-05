@@ -1,131 +1,150 @@
-Expense Tracker Backend
-This is the backend service for an Expense Tracker application, built using Java 21 and Spring Boot 3. It provides RESTful API endpoints to manage expenses.
+# Expense Tracker Backend
 
-Project Overview
-The Expense Tracker backend allows users to create, read, update, and delete expense records. This initial version features:
+This is the backend service for an Expense Tracker application, developed using Java 21 and Spring Boot 3. The backend provides RESTful API endpoints to manage expense records, with full Create, Read, Update, and Delete (CRUD) functionality. Data persistence is managed using Spring Data JPA and an in-memory H2 database for development and testing.
 
-A working REST API endpoint to fetch a list of expenses.
+---
 
-Uses Java 21 and Spring Boot 3 for modern, maintainable code.
+## Project Overview
 
-Designed to be easily extendable with database integration and additional features.
+The Expense Tracker backend allows users to:
 
-Ready for integration with frontend apps or microservices written in other languages.
+- Add new expenses.
+- Retrieve all expenses or a specific expense by ID.
+- Update existing expenses.
+- Delete expenses.
+- Persist expense data in an H2 in-memory database.
+- Access the H2 database console for direct database inspection.
 
-Project Structure
-text
+This project is designed to be extendable and ready for integration with a frontend application or additional microservices.
+
+---
+
+## Project Structure
+
 backend/
 ├─ src/
-│  ├─ main/
-│  │  ├─ java/com/atchayaveeramani/backend/
-│  │  │  ├─ BackendApplication.java         # Main Spring Boot application
-│  │  │  ├─ Expense.java                    # Expense model class
-│  │  │  ├─ ExpenseController.java          # REST API controller for expenses
-│  │  │  └─ HelloController.java            # Sample/test controller
-│  │  └─ resources/
-│  │     └─ application.properties          # Configuration files
-├─ build.gradle                             # Gradle build configuration
-├─ gradlew, gradlew.bat                      # Gradle wrapper scripts
-└─ README.md                               # This project documentation
-Development Process
-1. Environment Setup
-Installed Java 21 JDK and set the JAVA_HOME environment variable.
+│ ├─ main/
+│ │ ├─ java/com/atchayaveeramani/backend/
+│ │ │ ├─ BackendApplication.java # Spring Boot main application
+│ │ │ ├─ Expense.java # Expense entity class annotated for JPA
+│ │ │ ├─ ExpenseController.java # REST API controller for expenses
+│ │ │ └─ ExpenseRepository.java # Spring Data JPA repository interface
+│ │ └─ resources/
+│ │ └─ application.properties # Application configuration (datasource, JPA, H2)
+├─ build.gradle # Gradle build configuration
+├─ gradlew, gradlew.bat # Gradle wrapper scripts
+└─ README.md # This project documentation
 
-Configured VS Code for Java development.
 
-Initialized the project with Gradle and Spring Boot 3.
 
-2. Creating the Basic Application
-Created BackendApplication.java as the main Spring Boot app launcher.
+## Development Process
 
-Verified the app runs successfully with embedded Tomcat server.
+### 1. Environment Setup  
+- Installed Java 21 JDK and configured development environment with VS Code.  
+- Initialized a Spring Boot 3 project using Gradle with necessary dependencies.
 
-3. Building the Expense Model
-Developed Expense.java class to represent expense data structure:
+### 2. Defining the Expense Entity  
+- Created `Expense.java` annotated with `@Entity` and `@Table` for JPA persistence.  
+- Fields include `id`, `title`, `amount`, and `date`.  
+- Used `@Id` and `@GeneratedValue` for automatic ID generation.
 
-Fields: id (Long), title (String), amount (Double), date (LocalDate).
+### 3. Building the REST Controller  
+- Created `ExpenseController.java` with endpoints:  
+  - `GET /expenses` to retrieve all expenses  
+  - `POST /expenses` to add a new expense  
+  - `GET /expenses/{id}` to retrieve an expense by ID  
+  - `PUT /expenses/{id}` to update an expense  
+  - `DELETE /expenses/{id}` to delete an expense
 
-Included constructors, getters, and setters.
+### 4. Setting up Persistence  
+- Added Spring Data JPA and H2 dependencies in `build.gradle`.  
+- Configured datasource and JPA properties in `application.properties` for H2 in-memory database.  
+- Created `ExpenseRepository.java` interface extending `JpaRepository` for database interaction.
 
-4. Developing the Expense Controller
-Created ExpenseController.java with:
+### 5. Testing and Verification  
+- Used Postman and curl to test CRUD endpoints, validating JSON request and response.  
+- Accessed the H2 database console at `http://localhost:8080/h2-console` to inspect the `expenses` table and data.
 
-Annotation @RestController.
+---
 
-Endpoint @GetMapping("/expenses") returning a list of sample expenses as JSON.
+## Running the Application Locally
 
-Tested endpoint locally at http://localhost:8080/expenses until it returned expected JSON data.
-
-5. Troubleshooting & Fixes
-Resolved common issues such as:
-
-Matching class names and filenames (singular Expense used consistently).
-
-Restarting Spring Boot after code changes.
-
-Killing previous processes blocking port 8080.
-
-Fixing 404 errors by ensuring correct package structure and annotations.
-
-6. Version Control
-Saved the project regularly.
-
-Used Git and GitHub Desktop to commit and push code after significant changes.
-
-Updated this README file to document project progress and endpoint usage.
-
-How to Run Locally
-Clone the repository:
-
-text
+1. Clone the repository:
 git clone https://github.com/yourusername/expense-tracker-java-go.git
-Navigate to backend directory:
 
-text
+
+
+2. Navigate to the backend folder:
 cd expense-tracker-java-go/backend
-Run the backend:
 
-text
-.\gradlew.bat bootRun
-Open your browser or Postman and visit:
 
-text
-http://localhost:8080/expenses
-API Endpoint
-GET /expenses
-Returns a list of expense objects in JSON format:
+3. Run the application:
+- On Linux/Mac:
+  ```
+  ./gradlew bootRun
+  ```
+- On Windows:
+  ```
+  .\gradlew.bat bootRun
+  ```
 
-Response Example:
-
-json
-[
+4. Access the API endpoints:  
+- Get all expenses:  
+  ```
+  GET http://localhost:8080/expenses
+  ```
+- Add a new expense:  
+  ```
+  POST http://localhost:8080/expenses
+  ```
+  Body example (JSON):
+  ```
   {
-    "id": 1,
-    "title": "Coffee",
-    "amount": 2.5,
-    "date": "2025-08-05"
-  },
-  {
-    "id": 2,
-    "title": "Book",
-    "amount": 15,
-    "date": "2025-08-05"
+    "title": "Lunch",
+    "amount": 12.75
   }
-]
-Future Improvements
-Add database persistence using Spring Data JPA and H2/MySQL.
+  ```
+- Get expense by ID, update, or delete using respective endpoints.
 
-Expand CRUD operations (POST, PUT, DELETE endpoints).
+5. View database content in H2 console:  
+http://localhost:8080/h2-console
 
-Implement validation, authentication, and error handling.
+- JDBC URL: `jdbc:h2:mem:expensetrackerdb`  
+- Username: `sa`  
+- Password: (leave blank)
 
-Integrate analytics microservice built with Go.
+---
 
-Build a user-friendly frontend to interact with the backend.
+## API Documentation
 
-Acknowledgements
-This project was personally developed using official Spring Boot documentation, Java tutorials, and best practices for REST API design.
+### Endpoints:
 
-Feel free to customize the repository URL and add any personal notes or additional instructions.
+| Method | Endpoint          | Description                 |
+|--------|-------------------|-----------------------------|
+| GET    | /expenses         | Retrieve all expenses        |
+| POST   | /expenses         | Add a new expense            |
+| GET    | /expenses/{id}    | Retrieve an expense by ID    |
+| PUT    | /expenses/{id}    | Update an existing expense   |
+| DELETE | /expenses/{id}    | Delete an expense by ID      |
 
-This README presents the project clearly as your hands-on work with problem-solving and backend design skills, perfect for showcasing your abilities to hiring professionals.
+---
+
+## Future Improvements
+
+- Add input validation with Spring Validation (`@Valid`, `@NotNull`, etc.).  
+- Implement global exception handling with `@ControllerAdvice` for consistent error responses.  
+- Write unit and integration tests with JUnit and Mockito.  
+- Develop a frontend application to interact with this backend.  
+- Secure the API using Spring Security for authentication and authorization.  
+- Switch to a persistent database like MySQL/PostgreSQL for production deployment.  
+- Set up CI/CD pipelines and deploy to cloud platforms such as AWS or Azure.
+
+---
+
+## Acknowledgements
+
+This project was developed independently using Spring Boot, official documentation, tutorials, and best practices for RESTful API design and Java backend development.
+
+---
+
+Feel free to customize and extend this project according to your needs.
