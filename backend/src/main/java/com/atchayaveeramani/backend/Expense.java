@@ -1,8 +1,8 @@
 package com.atchayaveeramani.backend;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
 import java.time.LocalDate;
-
 
 @Entity
 @Table(name = "expenses")
@@ -12,16 +12,18 @@ public class Expense {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
-    private String title;
+   @NotBlank(message = "Title must not be blank")
+private String title;
 
-    @Column(nullable = false)
-    private Double amount;
+@NotNull(message = "Amount is required")
+@Positive(message = "Amount must be positive")
+private Double amount;
 
-    @Column(nullable = false)
-    private LocalDate date;
+@NotNull(message = "Date is required")
+private LocalDate date;
 
 
+    // Constructors, getters, setters
     public Expense() {}
 
     public Expense(Long id, String title, Double amount, LocalDate date) {
@@ -31,7 +33,9 @@ public class Expense {
         this.date = date;
     }
 
-     public Long getId() {
+    
+
+    public Long getId() {
         return id;
     }
 
@@ -62,4 +66,6 @@ public class Expense {
     public void setDate(LocalDate date) {
         this.date = date;
     }
+
+
 }

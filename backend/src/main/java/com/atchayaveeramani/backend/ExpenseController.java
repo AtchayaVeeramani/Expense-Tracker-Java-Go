@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
-
+import jakarta.validation.Valid;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -22,13 +22,27 @@ public class ExpenseController {
     }
 
     // POST /expenses - add new expense
-    @PostMapping
-    public Expense addExpense(@RequestBody Expense expense) {
-        if (expense.getDate() == null) {
-            expense.setDate(LocalDate.now());
-        }
-        return expenseRepository.save(expense);
+   @PostMapping
+public Expense addExpense(@Valid @RequestBody Expense expense) {
+    if (expense.getDate() == null) {
+        expense.setDate(LocalDate.now());
     }
+    return expenseRepository.save(expense);
+}
+
+
+@PutMapping("/{id}")
+public Expense updateExpense(@PathVariable Long id, @Valid @RequestBody Expense expenseDetails) {
+    Expense expense = expenseRepository.findById(id)
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Expense not found"));
+
+    expense.setTitle(expenseDetails.getTitle());
+    expense.setAmount(expenseDetails.getAmount());
+    expense.setDate(expenseDetails.getDate() != null ? expenseDetails.getDate() : expense.getDate());
+
+    return expenseRepository.save(expense);
+}
+
 
     // GET /expenses/{id} - get expense by id
     @GetMapping("/{id}")
@@ -37,18 +51,7 @@ public class ExpenseController {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Expense not found"));
     }
 
-    // PUT /expenses/{id} - update existing expense
-    @PutMapping("/{id}")
-    public Expense updateExpense(@PathVariable Long id, @RequestBody Expense expenseDetails) {
-        Expense expense = expenseRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Expense not found"));
-
-        expense.setTitle(expenseDetails.getTitle());
-        expense.setAmount(expenseDetails.getAmount());
-        expense.setDate(expenseDetails.getDate() != null ? expenseDetails.getDate() : expense.getDate());
-
-        return expenseRepository.save(expense);
-    }
+   
 
     // DELETE /expenses/{id} - delete expense
     @DeleteMapping("/{id}")
