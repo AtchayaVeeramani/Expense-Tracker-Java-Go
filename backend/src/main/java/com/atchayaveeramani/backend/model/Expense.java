@@ -1,29 +1,19 @@
-package com.atchayaveeramani.backend;
+package com.atchayaveeramani.backend.model;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.*;
 import java.time.LocalDate;
 
 @Entity
 @Table(name = "expenses")
 public class Expense {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-   @NotBlank(message = "Title must not be blank")
-private String title;
+    private String title;
+    private Double amount;
+    private LocalDate date;
 
-@NotNull(message = "Amount is required")
-@Positive(message = "Amount must be positive")
-private Double amount;
-
-@NotNull(message = "Date is required")
-private LocalDate date;
-
-
-    // Constructors, getters, setters
     public Expense() {}
 
     public Expense(Long id, String title, Double amount, LocalDate date) {
@@ -32,8 +22,6 @@ private LocalDate date;
         this.amount = amount;
         this.date = date;
     }
-
-    
 
     public Long getId() {
         return id;
@@ -66,6 +54,4 @@ private LocalDate date;
     public void setDate(LocalDate date) {
         this.date = date;
     }
-
-
 }
